@@ -89,8 +89,15 @@ INSERT INTO movies (title, year, show_time) VALUES ('Avengers: Infinity War', 20
 
 -- The cinema would like to make the Iron Man movies a triple billing. Find out the show time of "Iron Man 2" and set the show time of "Iron Man 3" to start two hours later.
 
-UPDATE movies SET show_time = (SELECT show_time FROM movies WHERE id = 3) + '02:00' WHERE id = 7;
+-- SELECT TO_TIMESTAMP(show_time, 'HH24:MI:SS')::TIME from movies WHERE id = 3;
+
+
+UPDATE movies SET show_time = (SELECT (TO_TIMESTAMP(show_time, 'HH24:MI:SS')::TIME) FROM movies
+	WHERE id = 3) + 02:00:00 WHERE id = 7;
 SELECT * FROM movies;
+
+UPDATE movies SET show_time = TO_CHAR(TO_TIMESTAMP((SELECT show_time FROM movies
+	WHERE title = 'Iron Man 2'), 'HH24:MI') + interval '2 hours', 'HH24:MI') WHERE title = 'Iron Man 3';
 
 -- Extension
 -- Research how to delete multiple entries from your table in a single command.
